@@ -1,0 +1,11 @@
+{
+  "name": "one-yuan-house-online-final",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "latest",
+    "socket.io": "latest"
+  }
+}

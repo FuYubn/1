@@ -1,0 +1,60 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>一元冒险小屋</title>
+<style>
+body{font-family:"微软雅黑";background:#fff1f7;max-width:700px;margin:auto;padding:15px}
+.box{background:#fff;border-radius:22px;padding:15px;margin:12px 0}
+button{background:#e879b0;color:#fff;border:0;border-radius:30px;padding:12px 18px}
+input{padding:10px;border-radius:20px;border:1px solid #ddd}
+.cell{display:inline-flex;width:45px;height:45px;margin:3px;border-radius:12px;background:#eef0ff;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<h1>💖 一元冒险小屋 Online</h1>
+
+<div class="box">
+<input id="name" placeholder="名字">
+<button onclick="create()">创建房间</button>
+<input id="room" placeholder="房间号">
+<button onclick="join()">加入</button>
+<button onclick="start()">开始</button>
+<div id="roomText"></div>
+</div>
+
+<div class="box">
+<button onclick="roll()">🎲 投骰子</button>
+<div id="map"></div>
+</div>
+
+<div class="box" id="players"></div>
+<div class="box">
+<input id="chatText" placeholder="聊天">
+<button onclick="chat()">发送</button>
+</div>
+<div class="box" id="logs"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket=io();
+for(let i=1;i<=30;i++)map.innerHTML+=`<span class="cell">${i}</span>`;
+
+function create(){socket.emit("create",name.value)}
+function join(){socket.emit("join",{room:room.value,name:name.value})}
+function start(){socket.emit("start")}
+function roll(){socket.emit("roll")}
+function chat(){socket.emit("chat",chatText.value);chatText.value=""}
+
+socket.on("room",r=>roomText.innerHTML="🏠 房间号："+r);
+
+socket.on("state",g=>{
+players.innerHTML=g.players.map((p,i)=>
+`${i===g.turn?"✨":""}${p.name}：第${p.pos}格`).join("<br>");
+logs.innerHTML=g.logs.slice(0,20).join("<br>");
+});
+</script>
+</body>
+</html>
